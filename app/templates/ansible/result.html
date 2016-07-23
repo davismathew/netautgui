@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+{% block title %}Ansible - Post{% endblock %}
+
+{% block page_content %}
+
+<ul class="posts">
+    {% for result in results %}
+    <li class="post">
+        <div class="post-thumbnail">
+            </a>
+        </div>
+        <div class="post-content">
+            <div class="post-author"></div>
+            <div class="post-body">
+                {{ result.id }}
+                {{ result.name }}
+            </div>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}
+

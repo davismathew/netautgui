@@ -74,6 +74,10 @@ class User(UserMixin, db.Model):
     member_since = db.Column(db.DateTime(), default=datetime.utcnow)
     last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
     avatar_hash = db.Column(db.String(32))
+    result = db.relationship("Result", uselist=False,back_populates="users")
+    project = db.relationship("Project", uselist=False,back_populates="users")
+    task = db.relationship("Task", uselist=False,back_populates="users")
+    inventory = db.relationship("Inventory", uselist=False,back_populates="users")
     posts = db.relationship('Post', backref='author', lazy='dynamic')
     followed = db.relationship('Follow',
                                foreign_keys=[Follow.follower_id],
@@ -341,6 +345,62 @@ class Post(db.Model):
 
 
 db.event.listen(Post.body, 'set', Post.on_changed_body)
+
+class Inventory(db.Model):
+    __tablename__ = 'inventory'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Text)
+    description = db.Column(db.Text)
+    variables = db.Column(db.Text)
+    file = db.Column(db.Text)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    users = db.relationship("User", back_populates = "inventory")
+
+    def __repr__(self):
+        return '<Inventory %r>' % self.name
+
+class Project(db.Model):
+    __tablename__ = 'project'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Text)
+    description = db.Column(db.Text)
+    tasks=db.relationship("Task", backref="project")
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    users = db.relationship("User", back_populates = "project")
+
+    def __repr__(self):
+        return '<Project %r>' % self.name
+
+class Task(db.Model):
+    __tablename__ = 'task'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Text)
+    description = db.Column(db.Text)
+    path = db.Column(db.Text)
+    playbook = db.Column(db.Text)
+    tags = db.Column(db.Text)
+    project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
+    results=db.relationship("Result", backref="task")
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    users = db.relationship("User", back_populates = "task")
+
+    def __repr__(self):
+        return '<Task %r>' % self.name
+
+class Result(db.Model):
+    __tablename__ = 'result'
+    id = db.Column(db.Integer, primary_key=True)
+    status = db.Column(db.Text)
+    finished = db.Column(db.Text)
+    path = db.Column(db.Text)
+    playbook = db.Column(db.Text)
+    tags = db.Column(db.Text)
+    project_id = db.Column(db.Integer, db.ForeignKey('task.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    users = db.relationship("User", back_populates = "result")
+
+    def __repr__(self):
+        return '<Result %r>' % self.name
 
 
 class Comment(db.Model):

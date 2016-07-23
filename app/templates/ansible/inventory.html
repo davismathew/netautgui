@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+{% block title %}Ansible - Post{% endblock %}
+
+{% block page_content %}
+
+<ul class="posts">
+    {% for inventory in inventories %}
+    <li class="post">
+        <div class="post-thumbnail">
+            </a>
+        </div>
+        <div class="post-content">
+            <div class="post-author"></div>
+            <div class="post-body">
+                {{ inventory.id }}
+                {{ inventory.name }}
+            </div>
+            <div class="post-footer">
+                <a href="{{ url_for('ansible.edit_inventory', id=inventory.id) }}">
+                    <span class="label label-primary">Edit</span>
+                </a>
+                <a href="{{ url_for('ansible.listinventory') }}">
+                    <span class="label label-default">Permalink</span>
+                </a>
+                <a href="{{ url_for('ansible.listinventory') }}#comments">
+                    <span class="label label-primary"> something</span>
+                </a>
+            </div>
+
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}
+
