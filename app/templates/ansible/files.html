@@ -14,7 +14,7 @@
 
 <button type="button" onclick="goBack()"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></button>
 <ul class="posts">
-    {% for inventory in inventories %}
+    {% for file in files %}
     <li class="post">
         <div class="post-thumbnail">
             </a>
@@ -22,16 +22,7 @@
         <div class="post-content">
             <div class="post-author"></div>
             <div class="post-body">
-                {{ inventory.id }}
-                {{ inventory.name }}
-            </div>
-            <div class="post-footer">
-                <a href="{{ url_for('ansible.edit_inventory', id=inventory.id) }}">
-                    <span class="label label-primary">Edit</span>
-                </a>
-                <a href="{{ url_for('ansible.listinventory') }}">
-                    <span class="label label-default">Permalink</span>
-                </a>
+                {{ file }}
             </div>
 
         </div>

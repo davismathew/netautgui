@@ -6,7 +6,7 @@ from . import main
 from .forms import EditProfileForm, EditProfileAdminForm, PostForm,\
     CommentForm
 from .. import db
-from ..models import Permission, Role, User, Post, Comment
+from ..models import Permission, Role, User, Post, Comment, Project, Task, Inventory
 from ..decorators import admin_required, permission_required
 
 
@@ -35,6 +35,9 @@ def server_shutdown():
 @main.route('/', methods=['GET', 'POST'])
 def index():
     form = PostForm()
+    project=Project.query.count()
+    inventory=Inventory.query.count()
+    task=Task.query.count()
     if current_user.can(Permission.WRITE_ARTICLES) and \
             form.validate_on_submit():
         post = Post(body=form.body.data,
@@ -54,7 +57,8 @@ def index():
         error_out=False)
     posts = pagination.items
     return render_template('index.html', form=form, posts=posts,
-                           show_followed=show_followed, pagination=pagination)
+                           show_followed=show_followed, pagination=pagination,
+                           projectcount=project, inventorycount=inventory, taskcount=task)
 
 
 @main.route('/user/<username>')

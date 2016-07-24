@@ -6,7 +6,17 @@ from .forms import InventoryForm, ProjectForm, TaskForm
 from . import ansible
 from .. import db
 from ..models import Inventory, Post, Project, Task, Result
+import os
 
+@ansible.route('/files', methods=['GET','POST'])
+@login_required
+def fileslist():
+    files=os.listdir("/etc/ansible/")
+    inventory = Inventory.query.all()
+    # form.name.data = current_user.name
+    # form.description.data = current_user.location
+    # form.file.data = current_user.about_me
+    return render_template('ansible/files.html', files=files)
 
 @ansible.route('/create-inventory', methods=['GET','POST'])
 @login_required

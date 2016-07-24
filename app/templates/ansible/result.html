@@ -6,21 +6,20 @@
 
 {% block page_content %}
 
-<ul class="posts">
-    {% for result in results %}
-    <li class="post">
-        <div class="post-thumbnail">
-            </a>
-        </div>
-        <div class="post-content">
-            <div class="post-author"></div>
-            <div class="post-body">
-                {{ result.id }}
-                {{ result.name }}
-            </div>
-        </div>
-    </li>
-    {% endfor %}
-</ul>
+
+<div class="panel panel-default">
+    <div class="panel-heading">Results</div>
+    <table class="table">
+        <tr>
+            <th>
+                <td><strong>Task name</strong></td><td><strong>Playbook name</strong></td><td><strong>Project Name</strong></td><td><strong>Status</strong></td><td><strong>finished</strong></td>
+            </th>
+        </tr>
+        <tr>
+            <td></td><td>name</td><td>playbook</td><td>project</td><td>status</td><td>timestamp</td>
+        </tr>
+    </table>
+</div>
+
 {% endblock %}
 

@@ -11,36 +11,17 @@
 <div class="row">
     <div class="col-md-4">
     <button class="btn btn-primary" type="button" style="display:block; width:100%">
-        Projects <span class="badge">10</span>
+        Projects <span class="badge">{{ projectcount }}</span>
     </button></div>
     <div class="col-md-4">
     <button class="btn btn-primary" type="button" style="display:block; width:100%">
-        Inventories <span class="badge">10</span>
+        Inventories <span class="badge">{{ inventorycount }}</span>
     </button></div>
     <div class="col-md-4">
     <button class="btn btn-primary" type="button" style="display:block; width:100%">
-        Tasks <span class="badge">10</span>
+        Tasks <span class="badge">{{ taskcount }}</span>
     </button></div>
 </div>
-<div>
-    {% if current_user.can(Permission.WRITE_ARTICLES) %}
-    {{ wtf.quick_form(form) }}
-    {% endif %}
-</div>
-<div class="post-tabs">
-    <ul class="nav nav-tabs">
-        <li{% if not show_followed %} class="active"{% endif %}><a href="{{ url_for('.show_all') }}">All</a></li>
-        {% if current_user.is_authenticated %}
-        <li{% if show_followed %} class="active"{% endif %}><a href="{{ url_for('.show_followed') }}">Followers</a></li>
-        {% endif %}
-    </ul>
-    {% include '_posts.html' %}
-</div>
-{% if pagination %}
-<div class="pagination">
-    {{ macros.pagination_widget(pagination, '.index') }}
-</div>
-{% endif %}
 {% endblock %}
 
 {% block scripts %}
