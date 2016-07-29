@@ -16,8 +16,7 @@ def fileslist():
     # form.name.data = current_user.name
     # form.description.data = current_user.location
     # form.file.data = current_user.about_me
-    return render_template('ansible/files.html', files=files)
-
+    return render_template('ansible/files.html', files=files)    
 @ansible.route('/create-inventory', methods=['GET','POST'])
 @login_required
 def create_inventory():

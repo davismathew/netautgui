@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+ 
+<head>
+    <title>EMC - NETAUT</title>
+ 
+ 
+    <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+ 
+    <link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+    
+    <script>
+
+$(document).ready(function() {
+  
+  $('#reset').on('click',function(events) { 
+  
+     $('#name').val(' ');
+     $('#desc').val(' ');
+     $('#jTags').val(' ');
+     $('#inventory').val(' ');
+     $('#playbook').val(' ');
+  
+  }); 
+
+  $('#run').on('click',function(events) { 
+    var name=$('#name').val();
+    var desc=$('#desc').val();
+    var jobTags=$('#jTags').val();
+    var inventory=$('#inventory option:selected').text();
+    var playbookName=$('#playbook option:selected').text();
+    $('#spinner').show();
+    $.ajax({
+                   type: "POST",
+                   url: "http://200.12.221.13:5000/runAnsiblePlaybook",
+                   //data: {column1 : col1, column2 : col2}
+                   data: { name : name, desc : desc, jobTags : jobTags,  inventory : inventory, playbookName:playbookName }, // post values
+		   
+                   success:function(result){
+                                  //alert(result);
+				  $('#AllResult').show();
+				  $('#spinner').hide();
+				  $('#AllResult').text(result.value);
+                        }
+            });
+  
+  }); 
+
+  
+  
+  
+  
+});
+
+</script>
+ 
+ 
+</head>
+<style>
+
+div#spinner
+{
+    display: none;
+    width:100px;
+    height: 100px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    background:url(/static/loading.gif) no-repeat center #fff;
+    text-align:center;
+    padding:10px;
+    font:normal 16px Tahoma, Geneva, sans-serif;
+    border:1px solid #666;
+    margin-left: -50px;
+    margin-top: -50px;
+    z-index:2;
+    overflow: auto;
+}
+
+
+
+table.hovertable {
+	font-family: verdana,arial,sans-serif;
+	font-size:11px;
+	color:#333333;
+	border-width: 1px;
+	border-color: #999999;
+	border-collapse: collapse;
+}
+table.hovertable th {
+	background-color:#c3dde0;
+	border-width: 1px;
+	padding: 8px;
+	border-style: solid;
+	border-color: #a9c6c9;
+}
+table.hovertable tr {
+	background-color:#d4e3e5;
+}
+table.hovertable td {
+	border-width: 1px;
+	padding: 8px;
+	border-style: solid;
+	border-color: #a9c6c9;
+}
+
+ table {
+  width: 50%;
+  height: 50%;
+  word-wrap:break-word;
+}
+.theCell{
+    display:table-cell;
+    padding: 0px 2px; /* just some padding, if needed*/
+    white-space: pre; /* this will avoid line breaks*/
+}
+
+.button {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 24px;
+  cursor: pointer;
+  text-align: center;	
+  text-decoration: none;
+  outline: none;
+  color: red;
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 25px;
+  box-shadow: 0 9px #999;
+}
+
+.button:hover {background-color: #3e8e41}
+
+.button:active {
+  background-color: red;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+
+.delete {
+    background: url(http://cssdeck.com/uploads/media/items/5/5Fm069k.png)  10px -61px no-repeat #f3f3f3;
+    padding-left: 30px;
+}
+
+</style>
+
+
+ 
+<body>
+ 
+  <!--  <div class="container"> -->
+        <div class="header">
+            <nav>
+               <!-- <ul class="nav nav-pills pull-right">
+                    <li role="presentation" class="active"><a href="circuitDetails">Circuit Details</a>
+                    </li>
+                    <li role="presentation" class="active"><a href="circuitStates">Circuit States</a>
+                    </li>
+                    <li role="presentation" class="active"><a href="nodeStates">Node States</a>
+                    </li>
+                   
+                </ul>
+            </nav> -->
+          <center>  <h3 class="text-muted">Ansible</h3></center>
+        </div>
+ 
+       <!--  <div class="jumbotron"> -->
+       
+       <Label> Name        : </Label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;<input type="text" name="name" id="name"><br/> <br/> 
+       <Label> Description : </Label> &nbsp;&nbsp;<input type="text" name="desc" id="desc"><br/><br/>
+       <Label> Inventory   : </Label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <select id="inventory">
+                                 {% for invFileName in Inventory %} <option value=\" {{ invFileName }} \"> {{ invFileName }} </option> {% endfor %} </select><br /><br/>
+       <Label> Playbook    : </Label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <select id="playbook"> 
+                                   {% for playFileName in Playbook %}  <option value=\" {{ playFileName }} \"> {{ playFileName }} </option> {% endfor %}  </select> <br /><br />
+       <Label> Job Tags    : </Label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="jTags" id="jTags"><br /><br />
+       
+       
+       <button type="submit" class="btn" id="run">Save</button> &nbsp;&nbsp;&nbsp;<button type="submit" class="btn" id="reset">Reset</button>
+       
+       
+       <center>
+       <textarea rows="50" cols="100" id="AllResult" hidden>
+         
+       </textarea>
+       </center>
+         <div id="spinner" ><br>Loading..</div>  
+      <!--  </div> -- >
+ 
+        
+        <footer class="footer">
+            <p>&copy; MTN 2016</p>
+        </footer>
+ 
+ <!--   </div> -->
+</body>
+
+ 
+</html>
