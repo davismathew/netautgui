@@ -15,8 +15,24 @@
         <div class="post-content">
             <div class="post-author"></div>
             <div class="post-body">
-                {{ task.id }}
-                {{ task.name }}
+                <div class="row-fluid">
+                    <div class="col-xs-6 col-md-3">
+                    {{ task.id }}
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                    {{ task.name }}
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                    {{ task.description }}
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                        <a href="{{ baseurl }}?status=ok&finished=1&playbook=1&tags=1&inventory=1&credential=1&taskid={{ task.id }}">
+                        <span style="font-size:1.5em;" class="glyphicon glyphicon-play-circle" aria-hidden="true"></span>
+                            </a>
+
+                    {{ task.description }}
+                    </div>
+                </div>
             </div>
         </div>
     </li>

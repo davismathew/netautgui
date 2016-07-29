@@ -5,10 +5,12 @@ from wtforms.validators import Required, Length, Email, Regexp
 from wtforms import ValidationError
 from ..models import Inventory, Post, Project, Task, Result
 import os
+from .ansible_utils import project_path
 
 class InventoryForm(Form):
     name = StringField('Inventory Name', validators=[Length(0, 64)])
     description = StringField('Description', validators=[Length(0, 64)])
+    tags = StringField('Tags', validators=[Length(0, 64)])
     file = StringField('Inventory File', validators=[Length(0, 64)])
     variables = TextAreaField('Variables')
     submit = SubmitField('Submit')
@@ -16,25 +18,29 @@ class InventoryForm(Form):
 
 
 class ProjectForm(Form):
-    files=os.listdir("/var/lib/emc")
+    files=project_path('project')
     name = StringField('Project Name', validators=[Length(0, 64)])
     description = StringField('Description', validators=[Length(0, 64)])
+    tags = StringField('Tags', validators=[Length(0, 64)])
     projectdir = SelectField('Projects', choices=[(file,file) for file in files])
     submit = SubmitField('Submit')
     reset = SubmitField('Reset')
 
 
 class TaskForm(Form):
+    inventories = Inventory.query.all()
+    projects = Project.query.all()
     files=[]
     temp=os.listdir("/var/lib/emc/networkaut")
     for file in temp:
         if file.endswith(".yml"):
             files.append(file)
-    name = StringField('Task Name', validators=[Length(0, 64)])
+    name = StringField('Name', validators=[Length(0, 64)])
     description = StringField('Description', validators=[Length(0, 64)])
-    path = StringField('Path File', validators=[Length(0, 64)])
-    playbook = TextAreaField('Playbook')
-    taskdir = SelectField('Tasks', choices=[(file,file) for file in files])
-    tags = TextAreaField('Tags')
+    tags = StringField('Tags', validators=[Length(0, 64)])
+    playbook = SelectField('Playbook', choices=[(file,file) for file in files])
+    project = SelectField('Project', choices=[(pro.name,pro.name) for pro in projects])
+    inventory = SelectField('Inventory', choices=[(inv.name,inv.name) for inv in inventories])
+    credential = SelectField('Credentials', choices=[(inv.name,inv.name) for inv in inventories])
     submit = SubmitField('Submit')
-    reset = SubmitField('Reset')
+    Run = SubmitField('Run')

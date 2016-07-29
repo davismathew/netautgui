@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+{% block title %}Ansible - Post{% endblock %}
+
+{% block page_content %}
+
+
+<div class="panel panel-default">
+    <div class="panel-heading">Results</div>
+    <table class="table">
+        <tr>
+            <tr><td>{{ ret_data }}</td>
+            </tr>
+        </tr>
+    </table>
+</div>
+
+{% endblock %}
+

@@ -74,10 +74,10 @@ class User(UserMixin, db.Model):
     member_since = db.Column(db.DateTime(), default=datetime.utcnow)
     last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
     avatar_hash = db.Column(db.String(32))
-    result = db.relationship("Result", uselist=False,back_populates="users")
-    project = db.relationship("Project", uselist=False,back_populates="users")
-    task = db.relationship("Task", uselist=False,back_populates="users")
-    inventory = db.relationship("Inventory", uselist=False,back_populates="users")
+    results=db.relationship("Result", backref="users")
+    tasks=db.relationship("Task", backref="users")
+    project=db.relationship("Project", backref="users")
+    inventory=db.relationship("Inventory", backref="users")
     posts = db.relationship('Post', backref='author', lazy='dynamic')
     followed = db.relationship('Follow',
                                foreign_keys=[Follow.follower_id],
@@ -351,10 +351,13 @@ class Inventory(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text)
     description = db.Column(db.Text)
+    tags = db.Column(db.Text)
     variables = db.Column(db.Text)
     file = db.Column(db.Text)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    users = db.relationship("User", back_populates = "inventory")
+
+    def queryInventory(self):
+        Inventory.query.all()
 
     def __repr__(self):
         return '<Inventory %r>' % self.name
@@ -364,9 +367,10 @@ class Project(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text)
     description = db.Column(db.Text)
-    tasks=db.relationship("Task", backref="project")
+    projectdir = db.Column(db.Text)
+    tasks = db.relationship("Task", backref="project")
+    tags = db.Column(db.Text)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    users = db.relationship("User", back_populates = "project")
 
     def __repr__(self):
         return '<Project %r>' % self.name
@@ -376,13 +380,13 @@ class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text)
     description = db.Column(db.Text)
-    path = db.Column(db.Text)
     playbook = db.Column(db.Text)
+    inventory = db.Column(db.Text)
+    credential = db.Column(db.Text)
     tags = db.Column(db.Text)
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
     results=db.relationship("Result", backref="task")
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    users = db.relationship("User", back_populates = "task")
 
     def __repr__(self):
         return '<Task %r>' % self.name
@@ -392,12 +396,13 @@ class Result(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     status = db.Column(db.Text)
     finished = db.Column(db.Text)
-    path = db.Column(db.Text)
+    inventory = db.Column(db.Text)
+    credential = db.Column(db.Text)
     playbook = db.Column(db.Text)
+    outfile = db.Column(db.Text)
     tags = db.Column(db.Text)
     project_id = db.Column(db.Integer, db.ForeignKey('task.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    users = db.relationship("User", back_populates = "result")
 
     def __repr__(self):
         return '<Result %r>' % self.name
