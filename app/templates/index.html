@@ -22,6 +22,11 @@
         Tasks <span class="badge">{{ taskcount }}</span>
     </button></div>
 </div>
+<div>
+    {% if current_user.can(Permission.WRITE_ARTICLES) %}
+    {{ wtf.quick_form(form) }}
+    {% endif %}
+</div>
 {% endblock %}
 
 {% block scripts %}

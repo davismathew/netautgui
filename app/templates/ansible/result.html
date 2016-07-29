@@ -12,12 +12,16 @@
     <table class="table">
         <tr>
             <th>
-                <td><strong>Task name</strong></td><td><strong>Playbook name</strong></td><td><strong>Project Name</strong></td><td><strong>Status</strong></td><td><strong>finished</strong></td>
+                <td><strong>Task name</strong></td><td><strong>Playbook name</strong></td><td><strong>User Name</strong></td><td><strong>Status</strong></td><td><strong>finished</strong></td><td><strong>Action</strong></td>
             </th>
         </tr>
+        {% for result in results %}
+
         <tr>
-            <td></td><td>name</td><td>playbook</td><td>project</td><td>status</td><td>timestamp</td>
+            <td></td><td>{{ result.id }}</td><td>{{ result.playbook }}</td><td>{{ result.finished }}</td><td>{{ result.status }}</td><td>{{ user.username }}</td><td><a href="http://localhost:5000/listresult?status=ok&finished=1&playbook=1&tags=1&inventory=1&credential=1&taskid=1"><span style="font-size:1.5em;" class="glyphicon glyphicon-play-circle" aria-hidden="true"></span></a><a href="http://localhost:5000/listresult?status=ok&finished=1&playbook=1&tags=1&inventory=1&credential=1&taskid=1"><span style="font-size:1.5em;" class="glyphicon glyphicon-export" aria-hidden="true"></span></a><a href="http://localhost:5000/listresult?status=ok&finished=1&playbook=1&tags=1&inventory=1&credential=1&taskid=1"><span style="font-size:1.5em;" class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></td>
         </tr>
+
+        {% endfor %}
     </table>
 </div>
 
