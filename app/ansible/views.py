@@ -9,6 +9,7 @@ from ..models import Inventory, Post, Project, Task, Result, User
 import os
 import time
 from datetime import datetime
+from play_util.AnsiblePlaybook import AnsiblePlaybook
 
 @ansible.route('/files', methods=['GET','POST'])
 def fileslist():
@@ -38,13 +39,26 @@ def fileslist():
 
 @ansible.route('/run', methods=['GET', 'POST'])
 def runnothing():
-    args = request.args.get('a')
-    argsb = request.args.get('b')
-    inventory = Inventory.query.filter_by(id=2).first()
-    project = Project.query.all()
+    playbookName = request.args.get('playbookname')
+    inventory = request.args.get('inventory')
+  #  inventory = Inventory.query.filter_by(id=2).first()
+  #  project = Project.query.all()
     # retdata={'value':project[1].name}
-    retdata={'value':argsb}
-    return jsonify(retdata)
+  #  retdata={'value':argsb}
+  #  return jsonify(retdata)
+    playbook=AnsiblePlaybook(playbookName,inventory)
+    Output=playbook.runPlaybook()
+    fileRead=open('Output-pythonAnsible')
+    Output=fileRead.read()
+    # print Output
+    Output=Output.replace("[0;32m","")
+    Output=Output.replace("[0;31m","")
+    Output=Output.replace("[0m"," ")
+    Output=Output.replace("\x1b"," ")
+    #print Output
+#    ret_data = {"value": playbookName}
+    ret_data = {"value": Output}
+    return jsonify(ret_data)
 
 @ansible.route('/runplay', methods=['GET', 'POST'])
 def runplay():

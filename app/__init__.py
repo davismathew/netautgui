@@ -6,7 +6,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager
 from flask.ext.pagedown import PageDown
 from config import config
-from celery import Celery
+#from celery import Celery
 
 bootstrap = Bootstrap()
 mail = Mail()
