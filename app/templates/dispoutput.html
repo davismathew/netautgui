@@ -9,28 +9,33 @@
 
     <script>
 
-
 $(document).ready(function() {
 
-
-    var name=$('#name').val();
-    var desc=$('#desc').val();
-    var jobTags=$('#jTags').val();
-    var inventory=$('#inventory option:selected').text();
-    var playbookName=$('#playbook option:selected').text();
+    var result=$('#result').val();
+    <!--var inventory=2;-->
+    <!--var playbookName='cisco_xe.yml';-->
+    <!--alert(playbookName);-->
     $('#progress').show();
     $.ajax({
-                       type: "GET",
-                   url: "/files",
-                   //data: {column1 : col1, column2 : col2}
+                     type: "POST",
+                     url: "http://localhost:5000/getresultout",
+                     data: { result : result },
 
                    success:function(result){
                                   //alert(result);
                                   $('#AllResult').show();
                                   $('#downloadlink').show();
                                   $('#progress').hide();
-                                  $('#AllResult').text(result.key);
-                        }
+                                  $('#AllResult').text(result.value);
+                        },
+                   error:function(xhr, status, error) {
+                                  $('#AllResult').show();
+                                  $('#downloadlink').show();
+                                  $('#progress').hide();
+                                  alert(xhr.status);
+                                  alert(status);
+                                  $('#AllResult').text(error);
+                   }
             });
 
 
@@ -43,7 +48,7 @@ $(document).ready(function() {
 
 
        <!--  <div class="jumbotron"> -->
-       <input hidden type="text" name="resultid" id="resultid" value="somoething"><br/><br/>
+       <input hidden type="text" name="result" id="result" value="{{ resultid }}"><br/><br/>
 
 
        <center>

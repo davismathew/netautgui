@@ -5,6 +5,22 @@
 {% block title %}Ansible - Post{% endblock %}
 
 {% block page_content %}
+                <div class="row-fluid">
+                    <div class="col-xs-6 col-md-3">
+                        <strong>Project id</strong>
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                    <strong>Project name</strong>
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                    <strong>Project description</strong>
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+
+                    <strong>Action</strong>
+                    </div>
+                </div>
+<br>
 
 <ul class="posts">
     {% for project in projects %}
@@ -15,12 +31,28 @@
         <div class="post-content">
             <div class="post-author"></div>
             <div class="post-body">
-                {{ project.id }}
-                {{ project.name }}
+                <div class="row-fluid">
+                    <div class="col-xs-6 col-md-3">
+                    {{ project.id }}
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                    {{ project.name }}
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                    {{ project.description }}
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                        <a href="{{ url_for('ansible.edit_project', id=project.id) }}">
+                    <span class="label label-primary">Edit Project</span>
+                </a>
+
+                    </div>
+                </div>
             </div>
         </div>
     </li>
     {% endfor %}
 </ul>
+
 {% endblock %}
 

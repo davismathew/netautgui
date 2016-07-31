@@ -401,6 +401,7 @@ class Result(db.Model):
     playbook = db.Column(db.Text)
     outfile = db.Column(db.Text)
     tags = db.Column(db.Text)
+    ### change project_id name to task_id
     project_id = db.Column(db.Integer, db.ForeignKey('task.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 

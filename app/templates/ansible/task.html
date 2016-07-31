@@ -5,6 +5,22 @@
 {% block title %}Ansible - Post{% endblock %}
 
 {% block page_content %}
+                <div class="row-fluid">
+                    <div class="col-xs-6 col-md-3">
+                        <strong>Task id</strong>
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                    <strong>Task name</strong>
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                    <strong>Task description</strong>
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+
+                    <strong>Action</strong>
+                    </div>
+                </div>
+<br>
 
 <ul class="posts">
     {% for task in tasks %}
@@ -26,11 +42,14 @@
                     {{ task.description }}
                     </div>
                     <div class="col-xs-6 col-md-3">
-                        <a href="{{ baseurl }}?status=ok&finished=1&playbook=1&tags=1&inventory=1&credential=1&taskid={{ task.id }}">
+                        <a href="{{ baseurl }}?status=ok&finished=ok&playbook=cisco_xe.yml&tags=prod&inventory=dev&credential=prod&taskid={{ task.id }}">
                         <span style="font-size:1.5em;" class="glyphicon glyphicon-play-circle" aria-hidden="true"></span>
                             </a>
+                        Run Task &nbsp;&nbsp;
+                                                <a href="{{ url_for('ansible.edit_task', id=task.id) }}">
+                    <span class="label label-primary">Edit Task</span>
+                </a>
 
-                    {{ task.description }}
                     </div>
                 </div>
             </div>

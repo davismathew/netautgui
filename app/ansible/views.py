@@ -2,52 +2,80 @@ from flask import render_template, redirect, url_for, jsonify, abort, flash, req
     current_app, make_response
 from flask.ext.login import login_required, current_user
 from flask.ext.sqlalchemy import get_debug_queries
+from sqlalchemy import desc
 from .forms import InventoryForm, ProjectForm, TaskForm
 from . import ansible
+from sqlalchemy import update
 from .. import db
 from ..models import Inventory, Post, Project, Task, Result, User
 import os
 import time
 from datetime import datetime
-from play_util.AnsiblePlaybook import AnsiblePlaybook
+from .ansible_utils import get_path
+# from play_util.AnsiblePlaybook import AnsiblePlaybook
 
-@ansible.route('/files', methods=['GET','POST'])
-def fileslist():
+@ansible.route('/runresult', methods=['GET','POST'])
+def runresult():
     if request.method == 'POST':
-        inventory = Inventory.query.filter_by(id=2).first()
-        project = Project.query.all()
-        retdata={'value':project[1].name}
+        resultid=str(request.form['result'])
+        editresult = Result.query.get_or_404(resultid)
+        stdoutpath = get_path('resultout')
+        stdoutfilename = "stdout"+resultid+".out"
+        stdoutfile = stdoutpath+"/"+stdoutfilename
+        playbookName = editresult.playbook
+        inventory = editresult.inventory
+        editresult.outfile = stdoutfile
+        # retdata = {'value':stdoutfile}
+        # playbook=AnsiblePlaybook(playbookName,inventory)
+        # Output=playbook.runPlaybook()
+        fileRead=open(stdoutfile)
+        Output=fileRead.read()
+        # print Output
+        Output=Output.replace("[0;32m","")
+        Output=Output.replace("[0;31m","")
+        Output=Output.replace("[0m"," ")
+        Output=Output.replace("\x1b"," ")
+        retdata={'value':Output}
         return jsonify(retdata)
 
-    files=os.listdir("/etc/ansible/")
-    inventory = Inventory.query.all()
-    # form.name.data = current_user.name
-    # form.description.data = current_user.location
-    # form.file.data = current_user.about_me
-    # return render_template('ansible/files.html', files=files)
-    time.sleep(5)
-    fileRead=open('/home/davis/Documents/flasky/app/ansible/Output-pythonAnsible')
-    Output=fileRead.read()
-           # print Output
-    Output=Output.replace("[0;32m","")
-    Output=Output.replace("[0;31m","")
-    Output=Output.replace("[0m"," ")
-    Output=Output.replace("\x1b"," ")
-            #print Output
-    ret_data = {"key": files}
+    ret_data={'value':"use post with args result"}
     return jsonify(ret_data)
 
-@ansible.route('/run', methods=['GET', 'POST'])
+@ansible.route('/getresultout', methods=['GET','POST'])
+def fetchresultout():
+    if request.method == 'POST':
+        resultid=str(request.form['result'])
+        result = Result.query.get_or_404(resultid)
+        stdoutfile = result.outfile
+        # retdata = {'value':stdoutfile}
+        # playbook=AnsiblePlaybook(playbookName,inventory)
+        # Output=playbook.runPlaybook()
+        fileRead=open(stdoutfile)
+        Output=fileRead.read()
+        # # print Output
+        Output=Output.replace("[0;32m","")
+        Output=Output.replace("[0;31m","")
+        Output=Output.replace("[0m"," ")
+        Output=Output.replace("\x1b"," ")
+        retdata={'value':Output}
+        return jsonify(retdata)
+
+    ret_data={'value':"use post with args result"}
+    return jsonify(ret_data)
+
+
+@ansible.route('/runplay', methods=['GET', 'POST'])
 def runnothing():
     playbookName = request.args.get('playbookname')
     inventory = request.args.get('inventory')
+    path = request.args.get('projpath')
   #  inventory = Inventory.query.filter_by(id=2).first()
   #  project = Project.query.all()
     # retdata={'value':project[1].name}
   #  retdata={'value':argsb}
   #  return jsonify(retdata)
-    playbook=AnsiblePlaybook(playbookName,inventory)
-    Output=playbook.runPlaybook()
+  #   playbook=AnsiblePlaybook(playbookName,inventory)
+  #   Output=playbook.runPlaybook()
     fileRead=open('Output-pythonAnsible')
     Output=fileRead.read()
     # print Output
@@ -57,22 +85,8 @@ def runnothing():
     Output=Output.replace("\x1b"," ")
     #print Output
 #    ret_data = {"value": playbookName}
-    ret_data = {"value": Output}
+    ret_data = {"key": Output}
     return jsonify(ret_data)
-
-@ansible.route('/runplay', methods=['GET', 'POST'])
-def runplay():
-    error = None
-    inv=['test']
-    play=[]
-    if request.method == 'GET':
-        for file in os.listdir("/var/lib/emc/networkaut"):
-            if file.endswith(".yml"):
-                play.append(file)
-                print(file)
-            # inv=['dev','host']
-            #play=['cisco.yml','cisco_ce.yml']
-    return render_template('Playoutput.html',Inventory=inv,Playbook=play)
 
 # @ansible.route('/runplaybook', methods=['GET','POST'])
 # @login_required
@@ -131,12 +145,12 @@ def edit_inventory(id):
     editinventory=Inventory.query.get_or_404(id)
     form=InventoryForm()
     if form.validate_on_submit():
-        inventory=Inventory(name = form.name.data,
-                            description = form.description.data,
-                            file = form.file.data,
-                            tags = form.tags.data,
-                            variables = form.variables.data)
-        db.session.add(inventory)
+        editinventory.name = form.name.data
+        editinventory.description = form.description.data
+        editinventory.file = form.file.data
+        editinventory.tags = form.tags.data
+        editinventory.variables = form.variables.data
+        db.session.commit()
         flash('Inventory has been updated.')
         return redirect(url_for('ansible.listinventory'))
     form.name.data = editinventory.name
@@ -174,6 +188,24 @@ def create_project():
     # form.name.data = current_user.name
     # form.description.data = current_user.location
     # form.file.data = current_user.about_me
+    return render_template('ansible/create-project.html', form=form)
+
+@ansible.route('/edit-project/<int:id>', methods=['GET','POST'])
+@login_required
+def edit_project(id):
+    editproject=Project.query.get_or_404(id)
+    form=InventoryForm()
+    if form.validate_on_submit():
+        editproject.name = form.name.data
+        editproject.tags = form.tags.data
+        editproject.projectdir = form.projectdir.data
+        editproject.description = form.description.data
+        db.session.commit()
+        flash('Project has been updated.')
+        return redirect(url_for('ansible.listproject'))
+    form.name.data = editproject.name
+    form.description.data = editproject.description
+    form.tags.data = editproject.tags
     return render_template('ansible/edit-project.html', form=form)
 
 @ansible.route('/listproject', methods=['GET','POST'])
@@ -197,7 +229,7 @@ def create_task():
                             description = form.description.data,
                             playbook = form.playbook.data,
                             users = userobj,
-                            project = projectobj,
+                            project = form.project.data,
                             inventory = form.inventory.data,
                             credential = form.credential.data,
                             tags = form.tags.data)
@@ -207,6 +239,27 @@ def create_task():
     # form.name.data = current_user.name
     # form.description.data = current_user.location
     # form.file.data = current_user.about_me
+    return render_template('ansible/create-task.html', form=form)
+
+@ansible.route('/edit-task/<int:id>', methods=['GET','POST'])
+@login_required
+def edit_task(id):
+    edittask=Task.query.get_or_404(id)
+    form=TaskForm()
+    if form.validate_on_submit():
+        edittask.name = form.name.data
+        edittask.description = form.description.data
+        edittask.playbook = form.playbook.data
+        edittask.project = form.project.data
+        edittask.inventory = form.inventory.data
+        edittask.credential = form.credential.data
+        edittask.tags = form.tags.data
+        db.session.commit()
+        flash('Task has been updated.')
+        return redirect(url_for('ansible.listtask'))
+    form.name.data = edittask.name
+    form.description.data = edittask.description
+    form.tags.data = edittask.tags
     return render_template('ansible/edit-task.html', form=form)
 
 @ansible.route('/listtask', methods=['GET','POST'])
@@ -223,13 +276,13 @@ def listtask():
 @login_required
 def create_result():
     status = request.args.get('status')
-    finished = datetime.utcnow()
+    finished = datetime.utcnow().strftime('%Y-%m-%d  %H:%M:%S')
     playbook = request.args.get('playbook')
     tags = request.args.get('tags')
     inventory = request.args.get('inventory')
     credential = request.args.get('credential')
     task_id = request.args.get('taskid')
-
+    timestamp = datetime.utcnow().strftime('%s')
     taskobj = Task.query.filter_by(id=int(task_id)).first()
 
     outpath = request.args.get('outpath')
@@ -237,6 +290,7 @@ def create_result():
 
     result=Result(status = status,
                     finished = finished,
+                    # timestamp = timestamp,
                     playbook = playbook,
                     inventory = inventory,
                     credential = credential,
@@ -245,12 +299,55 @@ def create_result():
                     task = taskobj,
                     tags = tags)
     db.session.add(result)
+
+    resultid = Result.query.order_by(desc(Result.id)).first()
     flash('Result has been created.')
-    return redirect(url_for('ansible.listresult'))
+    return render_template('playoutput.html', resultid=resultid.id)
+
+@ansible.route('/rerunresult', methods=['GET','POST'])
+@login_required
+def rerunresult():
+    resultid = request.args.get('id')
+    result = Result.query.get_or_404(resultid)
+    status = result.status
+    finished = datetime.utcnow().strftime('%Y-%m-%d  %H:%M:%S')
+    playbook = result.playbook
+    tags = result.tags
+    inventory = result.inventory
+    credential = result.credential
+    ### change project_id name to task_id
+    task_id = result.project_id
+    timestamp = datetime.utcnow().strftime('%s')
+    taskobj = Task.query.filter_by(id=int(task_id)).first()
+
+    userobj = User.query.filter_by(id=int(current_user.id)).first()
+
+    result=Result(status = status,
+                    finished = finished,
+                    # timestamp = timestamp,
+                    playbook = playbook,
+                    inventory = inventory,
+                    credential = credential,
+                    users = userobj,
+                    task = taskobj,
+                    tags = tags)
+    db.session.add(result)
+
+    resultid = Result.query.order_by(desc(Result.id)).first()
+    flash('Result has been created.')
+    return render_template('playoutput.html', resultid=resultid.id)
+
+@ansible.route('/generateresultout', methods=['GET','POST'])
+@login_required
+def dispresultoutput():
+    resultid = request.args.get('id')
+    # flash('Result has been created.')
+    return render_template('dispoutput.html', resultid=resultid)
+
 
 @ansible.route('/listresult', methods=['GET','POST'])
 def listresult():
-    result = Result.query.all()
+    result = Result.query.order_by(desc(Result.id)).all()
     # task = Task.query.filter_by(id=int(result[0].project_id)).first()
     # user = User.query.filter_by(id=int(result[0].user_id)).first()
     # timestamp = str(result[0]).finished.strftime("%Y-%m-%d")

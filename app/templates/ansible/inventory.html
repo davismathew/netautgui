@@ -13,6 +13,24 @@
 {% block page_content %}
 
 <button type="button" onclick="goBack()"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></button>
+
+                <div class="row-fluid">
+                    <div class="col-xs-6 col-md-3">
+                        <strong>Task id</strong>
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                    <strong>Task name</strong>
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                    <strong>Task description</strong>
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+
+                    <strong>Action</strong>
+                    </div>
+                </div>
+<br>
+
 <ul class="posts">
     {% for inventory in inventories %}
     <li class="post">
@@ -22,21 +40,30 @@
         <div class="post-content">
             <div class="post-author"></div>
             <div class="post-body">
-                {{ inventory.id }}
-                {{ inventory.name }}
-            </div>
-            <div class="post-footer">
-                <a href="{{ url_for('ansible.edit_inventory', id=inventory.id) }}">
-                    <span class="label label-primary">Edit</span>
+                <div class="row-fluid">
+                    <div class="col-xs-6 col-md-3">
+                    {{ inventory.id }}
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                    {{ inventory.name }}
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                    {{ inventory.description }}
+                    </div>
+                    <div class="col-xs-6 col-md-3">
+                        <a href="{{ url_for('ansible.edit_inventory', id=inventory.id) }}">
+                    <span class="label label-primary">Edit Inventory</span>
                 </a>
-                <a href="{{ url_for('ansible.listinventory') }}">
-                    <span class="label label-default">Permalink</span>
-                </a>
-            </div>
 
+                    </div>
+                </div>
+            </div>
         </div>
     </li>
     {% endfor %}
 </ul>
+
+
+
 {% endblock %}
 
