@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, jsonify, abort, flash, request,\
+from flask import render_template, redirect, url_for, jsonify, abort, flash, send_from_directory, request,\
     current_app, make_response
 from flask.ext.login import login_required, current_user
 from flask.ext.sqlalchemy import get_debug_queries
@@ -13,6 +13,12 @@ import time
 from datetime import datetime
 from .ansible_utils import get_path
 from play_util.AnsiblePlaybook import AnsiblePlaybook
+
+@ansible.route('/downloadstdout', methods=['GET','POST'])
+def downloadstdout():
+    resultid = request.args.get('result')
+    filename = "stdout"+resultid+".out"
+    return send_from_directory('/etc/ansiblestdout',filename,as_attachment=True)
 
 @ansible.route('/runresult', methods=['GET','POST'])
 def runresult():
