@@ -18,7 +18,7 @@
         {% for result in results %}
 
         <tr>
-            <td></td><td>{{ result.id }}</td><td><a href="#aboutModal" data-toggle="modal" data-target="#myModal" class="btn btn-circle btn-success">{{ result.status }}</span></a></td><td>{{ result.finished }}</td><td>{{ result.playbook }}</td><td>{{ result.taskname }}</td><td><a href="http://localhost:5000/rerunresult?id={{ result.id }}"><span style="font-size:1.5em;" class="glyphicon glyphicon-play-circle" aria-hidden="true"></span></a><a href="http://localhost:5000/generateresultout?id={{ result.id }}">&nbsp;&nbsp;<span style="font-size:1.5em;" class="glyphicon glyphicon-export" aria-hidden="true"></span></a><a href="{{ url_for('ansible.edit_task', id=result.project_id) }}">&nbsp;&nbsp;<span style="font-size:1.5em;" class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></td>
+            <td></td><td>{{ result.id }}</td><td><a href="#aboutModal" data-toggle="modal" data-target="#myModal" class="btn btn-circle btn-success">{{ result.status }}</span></a></td><td>{{ result.finished }}</td><td>{{ result.playbook }}</td><td>{{ result.taskname }}</td><td><a href="http://200.12.221.13:5005/rerunresult?id={{ result.id }}"><span style="font-size:1.5em;" class="glyphicon glyphicon-play-circle" aria-hidden="true"></span></a><a href="http://200.12.221.13:5005/generateresultout?id={{ result.id }}">&nbsp;&nbsp;<span style="font-size:1.5em;" class="glyphicon glyphicon-export" aria-hidden="true"></span></a><a href="{{ url_for('ansible.edit_task', id=result.project_id) }}">&nbsp;&nbsp;<span style="font-size:1.5em;" class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></td>
         </tr>
 
         {% endfor %}

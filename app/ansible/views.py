@@ -12,7 +12,7 @@ import os
 import time
 from datetime import datetime
 from .ansible_utils import get_path
-# from play_util.AnsiblePlaybook import AnsiblePlaybook
+from play_util.AnsiblePlaybook import AnsiblePlaybook
 
 @ansible.route('/runresult', methods=['GET','POST'])
 def runresult():
@@ -26,8 +26,8 @@ def runresult():
         inventory = editresult.inventory
         editresult.outfile = stdoutfile
         # retdata = {'value':stdoutfile}
-        # playbook=AnsiblePlaybook(playbookName,inventory)
-        # Output=playbook.runPlaybook()
+        playbook=AnsiblePlaybook(playbookName,inventory,stdoutfile)
+        Output=playbook.runPlaybook()
         fileRead=open(stdoutfile)
         Output=fileRead.read()
         # print Output
@@ -48,7 +48,7 @@ def fetchresultout():
         result = Result.query.get_or_404(resultid)
         stdoutfile = result.outfile
         # retdata = {'value':stdoutfile}
-        # playbook=AnsiblePlaybook(playbookName,inventory)
+        # playbook=AnsiblePlaybook(playbookName,inventory,stdoutfile)
         # Output=playbook.runPlaybook()
         fileRead=open(stdoutfile)
         Output=fileRead.read()
@@ -269,7 +269,7 @@ def listtask():
     # form.name.data = current_user.name
     # form.description.data = current_user.location
     # form.file.data = current_user.about_me
-    baseurl="http://localhost:5000/create-result"
+    baseurl="http://200.12.221.13:5005/create-result"
     return render_template('ansible/task.html', tasks=task, baseurl=baseurl)
 
 @ansible.route('/create-result', methods=['GET','POST'])
