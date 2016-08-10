@@ -32,7 +32,7 @@ class TaskForm(Form):
     inventories = Inventory.query.all()
     projects = Project.query.all()
     files=[]
-    temp=os.listdir("/var/lib/emc/networkaut")
+    temp=os.listdir("/home/davis/Documents/Network-automation")
     for file in temp:
         if file.endswith(".yml"):
             files.append(file)
