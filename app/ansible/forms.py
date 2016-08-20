@@ -38,7 +38,7 @@ class TaskForm(Form):
             files.append(file)
     name = StringField('Name', validators=[Length(0, 64)])
     description = StringField('Description', validators=[Length(0, 64)])
-    tags = StringField('Tags', validators=[Length(0, 64)])
+    tags = StringField('factfile', validators=[Length(0, 64)])
     playbook = SelectField('Playbook', choices=[(file,file) for file in files])
     project = QuerySelectField(get_label='name',query_factory=lambda : Project.query.all())
     # project = SelectField('Project', choices=[(pro.name,pro.name) for pro in projects])

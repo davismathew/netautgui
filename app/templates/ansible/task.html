@@ -42,7 +42,7 @@
                     {{ task.description }}
                     </div>
                     <div class="col-xs-6 col-md-3">
-                        <a href="{{ baseurl }}?status=ok&finished=ok&playbook={{ task.playbook }}&tags=prod&inventory=dev&credential=prod&taskid={{ task.id }}">
+                        <a href="{{ baseurl }}?status=ok&finished=ok&playbook={{ task.playbook }}&tags={{ task.tags }}&inventory=inventory&credential=prod&taskid={{ task.id }}">
                         <span style="font-size:1.5em;" class="glyphicon glyphicon-play-circle" aria-hidden="true"></span>
                             </a>
                         Run Task &nbsp;&nbsp;

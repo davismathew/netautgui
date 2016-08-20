@@ -138,6 +138,10 @@ def create_inventory():
                             tags = form.tags.data,
                             variables = form.variables.data)
         db.session.add(inventory)
+        target = open('/home/davis/Documents/Network-automation/inventory', 'w')
+        target.write('[routerxe]')
+        target.write("\n")
+        target.write(variables)
         flash('Inventory has been updated.')
         return redirect(url_for('ansible.listinventory'))
     # form.name.data = current_user.name
@@ -157,6 +161,12 @@ def edit_inventory(id):
         editinventory.tags = form.tags.data
         editinventory.variables = form.variables.data
         db.session.commit()
+
+        target = open('/home/davis/Documents/Network-automation/inventory', 'w')
+        target.write('[routerxe]')
+        target.write("\n")
+        target.write(form.variables.data)
+
         flash('Inventory has been updated.')
         return redirect(url_for('ansible.listinventory'))
     form.name.data = editinventory.name
@@ -305,6 +315,11 @@ def create_result():
                     task = taskobj,
                     tags = tags)
     db.session.add(result)
+
+    target = open('/home/davis/Documents/Network-automation/sharedvalues.yaml', 'w')
+    target.write('---')
+    target.write("\n")
+    target.write('guivars: /etc/ansiblefacts/'+tags)
 
     resultid = Result.query.order_by(desc(Result.id)).first()
     flash('Result has been created.')
