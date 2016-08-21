@@ -32,8 +32,8 @@ def runresult():
         inventory = editresult.inventory
         editresult.outfile = stdoutfile
         # retdata = {'value':stdoutfile}
-        playbook=AnsiblePlaybook(playbookName,inventory,stdoutfile)
-        Output=playbook.runPlaybook()
+       playbook=AnsiblePlaybook(playbookName,inventory,stdoutfile)
+       Output=playbook.runPlaybook()
         fileRead=open(stdoutfile)
         Output=fileRead.read()
         # print Output
@@ -122,6 +122,98 @@ def runnothing():
 #             return render_template('ansible/runplay.html',ret_data=ret_data)
 
     #return render_template('Inventory.html',Output=Output)
+
+@ansible.route('/create-orion', methods=['GET','POST'])
+@login_required
+def create_orion():
+    form=TaskForm()
+    if form.validate_on_submit():
+        userobj = User.query.filter_by(id=int(current_user.id)).first()
+        projectobj = Project.query.filter_by(name=form.project.data).first()
+        task=Task(name = form.name.data,
+                            description = form.description.data,
+                            playbook = form.playbook.data,
+                            users = userobj,
+                            project = form.project.data,
+                            inventory = form.inventory.data,
+                            credential = form.credential.data,
+                            tags = form.tags.data)
+        db.session.add(task)
+        flash('Orion has been created.')
+        return redirect(url_for('ansible.listorion'))
+    # form.name.data = current_user.name
+    # form.description.data = current_user.location
+    # form.file.data = current_user.about_me
+    return render_template('ansible/create-orion.html', form=form)
+
+@ansible.route('/edit-orion/<int:id>', methods=['GET','POST'])
+@login_required
+def edit_orion(id):
+    edittask=Task.query.get_or_404(id)
+    form=TaskForm()
+    if form.validate_on_submit():
+        edittask.name = form.name.data
+        edittask.description = form.description.data
+        edittask.playbook = form.playbook.data
+        edittask.project = form.project.data
+        edittask.inventory = form.inventory.data
+        edittask.credential = form.credential.data
+        edittask.tags = form.tags.data
+        db.session.commit()
+        flash('Orion has been updated.')
+        return redirect(url_for('ansible.listorionk'))
+    form.name.data = edittask.name
+    form.description.data = edittask.description
+    form.tags.data = edittask.tags
+    return render_template('ansible/edit-orion.html', form=form)
+
+@ansible.route('/listorion', methods=['GET','POST'])
+@login_required
+def listorion():
+    task = Task.query.all()
+    # form.name.data = current_user.name
+    # form.description.data = current_user.location
+    # form.file.data = current_user.about_me
+    baseurl="http://200.12.221.13:5005/create-result"
+    return render_template('ansible/task.html', tasks=task, baseurl=baseurl)
+
+@ansible.route('/gettraceroute', methods=['GET','POST'])
+@login_required
+def gettraceroute():
+    task = Task.query.all()
+    # form.name.data = current_user.name
+    # form.description.data = current_user.location
+    # form.file.data = current_user.about_me
+    baseurl="http://200.12.221.13:5005/create-result"
+    return render_template('ansible/traceroute.html', tasks=task, baseurl=baseurl)
+
+@ansible.route('/runtraceroute', methods=['GET','POST'])
+@login_required
+def runtraceroute():
+    if request.method == 'POST':
+        resultid=str(request.form['ip'])
+        playbookName = 'tracerouteip.yml'
+        inventory = 'tracerouteinv'
+        stdoutfile = '/etc/ansiblestdout/traceroute.out'
+        # retdata = {'value':stdoutfile}
+       playbook=AnsiblePlaybook(playbookName,inventory,stdoutfile)
+       Output=playbook.runPlaybook()
+        target = open('/home/davis/Documents/Network-automation/tracerouteinv', 'w')
+        target.write('[routerxe]')
+        target.write("\n")
+        target.write('10.10.10.102')
+        fileRead=open(stdoutfile)
+        Output=fileRead.read()
+        # print Output
+        Output=Output.replace("[0;32m","")
+        Output=Output.replace("[0;31m","")
+        Output=Output.replace("[0m"," ")
+        Output=Output.replace("\x1b"," ")
+        retdata={'value':Output}
+        return jsonify(retdata)
+
+    ret_data={'value':"use post with args result"}
+    return jsonify(ret_data)
 
 
 
