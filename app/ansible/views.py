@@ -32,8 +32,8 @@ def runresult():
         inventory = editresult.inventory
         editresult.outfile = stdoutfile
         # retdata = {'value':stdoutfile}
-       playbook=AnsiblePlaybook(playbookName,inventory,stdoutfile)
-       Output=playbook.runPlaybook()
+        playbook=AnsiblePlaybook(playbookName,inventory,stdoutfile)
+        Output=playbook.runPlaybook()
         fileRead=open(stdoutfile)
         Output=fileRead.read()
         # print Output
@@ -196,8 +196,8 @@ def runtraceroute():
         inventory = 'tracerouteinv'
         stdoutfile = '/etc/ansiblestdout/traceroute.out'
         # retdata = {'value':stdoutfile}
-       playbook=AnsiblePlaybook(playbookName,inventory,stdoutfile)
-       Output=playbook.runPlaybook()
+        playbook=AnsiblePlaybook(playbookName,inventory,stdoutfile)
+        Output=playbook.runPlaybook()
         target = open('/home/davis/Documents/Network-automation/tracerouteinv', 'w')
         target.write('[routerxe]')
         target.write("\n")
