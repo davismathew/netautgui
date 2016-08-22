@@ -12,7 +12,7 @@ import os
 import time
 from datetime import datetime
 from .ansible_utils import get_path
-from play_util.AnsiblePlaybook import AnsiblePlaybook
+# from play_util.AnsiblePlaybook import AnsiblePlaybook
 from play_util.TracePath import tracePath
 
 @ansible.route('/downloadstdout', methods=['GET','POST'])
@@ -33,8 +33,8 @@ def runresult():
         inventory = editresult.inventory
         editresult.outfile = stdoutfile
         # retdata = {'value':stdoutfile}
-        playbook=AnsiblePlaybook(playbookName,inventory,stdoutfile)
-        Output=playbook.runPlaybook()
+        # playbook=AnsiblePlaybook(playbookName,inventory,stdoutfile)
+        # Output=playbook.runPlaybook()
         fileRead=open(stdoutfile)
         Output=fileRead.read()
         # print Output
@@ -215,8 +215,8 @@ def runtraceroute():
         # target.write("\n")
         # target.write('10.10.10.102')
 
-        playbook=AnsiblePlaybook(playbookName,inventory,stdoutfile)
-        Output=playbook.runPlaybook()
+        # playbook=AnsiblePlaybook(playbookName,inventory,stdoutfile)
+        # Output=playbook.runPlaybook()
 
         tPath=tracePath('ops.emc-corp.net','svcorionnet@emc-corp.net','$V(0r!0N3t')
         rPath=tPath.getPath("/etc/ansiblefacts/fact1471625818.json")
