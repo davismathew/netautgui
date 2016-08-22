@@ -178,15 +178,19 @@ def listorion():
     baseurl="http://200.12.221.13:5005/create-result"
     return render_template('ansible/task.html', tasks=task, baseurl=baseurl)
 
+@ansible.route('/gettraceip', methods=['GET','POST'])
+@login_required
+def gettraceip():
+    inputip="10.10.10.104"
+    baseurl="http://200.12.221.13:5005/create-result"
+    return render_template('ansible/traceip.html', ip=inputip)
+
 @ansible.route('/gettraceroute', methods=['GET','POST'])
 @login_required
 def gettraceroute():
-    task = Task.query.all()
-    # form.name.data = current_user.name
-    # form.description.data = current_user.location
-    # form.file.data = current_user.about_me
+    inputip="10.10.10.104"
     baseurl="http://200.12.221.13:5005/create-result"
-    return render_template('ansible/traceroute.html', tasks=task, baseurl=baseurl)
+    return render_template('ansible/traceroute.html', ip=inputip)
 
 @ansible.route('/runtraceroute', methods=['GET','POST'])
 @login_required
@@ -215,7 +219,7 @@ def runtraceroute():
         # Output=Output.replace("[0;31m","")
         # Output=Output.replace("[0m"," ")
         # Output=Output.replace("\x1b"," ")
-        retdata={'value':rPath}
+        retdata={'value':resultid}
         return jsonify(retdata)
 
     ret_data={'value':"use post with args result"}
