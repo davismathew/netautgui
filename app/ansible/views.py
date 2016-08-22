@@ -188,23 +188,32 @@ def gettraceip():
 @ansible.route('/gettraceroute', methods=['GET','POST'])
 @login_required
 def gettraceroute():
-    inputip="10.10.10.104"
-    baseurl="http://200.12.221.13:5005/create-result"
-    return render_template('ansible/traceroute.html', ip=inputip)
+    sourceip=request.args.get('source_ip')
+    destip=request.args.get('dest_ip')
+    target = open('/home/davis/Documents/Network-automation/tracerouteinv', 'w')
+    target.write('[routerxe]')
+    target.write("\n")
+    target.write(sourceip)
+    return render_template('ansible/traceroute.html', ip=destip)
 
 @ansible.route('/runtraceroute', methods=['GET','POST'])
 @login_required
 def runtraceroute():
     if request.method == 'POST':
-        resultid=str(request.form['ip'])
+        traceip=str(request.form['ip'])
         playbookName = 'tracerouteip.yml'
         inventory = 'tracerouteinv'
         stdoutfile = '/etc/ansiblestdout/traceroute.out'
-        # retdata = {'value':stdoutfile}
-        target = open('/home/davis/Documents/Network-automation/tracerouteinv', 'w')
-        target.write('[routerxe]')
+        target = open('/home/davis/Documents/Network-automation/tracecommand.yaml', 'w')
+        target.write('---')
         target.write("\n")
-        target.write('10.10.10.102')
+        target.write('commands: traceroute '+traceip)
+
+        # retdata = {'value':stdoutfile}
+        # target = open('/home/davis/Documents/Network-automation/tracerouteinv', 'w')
+        # target.write('[routerxe]')
+        # target.write("\n")
+        # target.write('10.10.10.102')
 
         # playbook=AnsiblePlaybook(playbookName,inventory,stdoutfile)
         # Output=playbook.runPlaybook()
@@ -219,7 +228,7 @@ def runtraceroute():
         # Output=Output.replace("[0;31m","")
         # Output=Output.replace("[0m"," ")
         # Output=Output.replace("\x1b"," ")
-        retdata={'value':resultid}
+        retdata={'value':traceip}
         return jsonify(retdata)
 
     ret_data={'value':"use post with args result"}

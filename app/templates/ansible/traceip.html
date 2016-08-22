@@ -4,77 +4,76 @@
 
 {% block title %}Ansible{% endblock %}
 {% block page_content %}
+<style type="text/css">
+    form {
+  /* Just to center the form on the page */
+  margin: 0 auto;
+  width: 500px;
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+  /* To see the limits of the form */
+  padding: 1em;
+  border: 1px solid #CCC;
+  border-radius: 1em;
+}
 
-    <script>
+div + div {
+  margin-top: 1em;
+}
 
-$(document).ready(function() {
+label {
+  /* To make sure that all label have the same size and are properly align */
+  display: inline-block;
+  width: 120px;
+  text-align: right;
+}
 
-    var ip=$('#ip').val();
-    <!--var inventory=2;-->
-    <!--var playbookName='cisco_xe.yml';-->
-    <!--alert(playbookName);-->
-    $('#progress').show();
-    $.ajax({
-                     type: "POST",
-                     url: "http://200.12.221.13:5005/runtraceroute",
-                     data: { ip : ip },
+input, textarea {
+  /* To make sure that all text field have the same font settings
+     By default, textarea are set with a monospace font */
+  font: 1em sans-serif;
 
-                   success:function(result){
-                                  //alert(result);
-                                  $('#AllResult').show();
-                                  $('#downloadlink').show();
-                                  $('#progress').hide();
-                                  $('#AllResult').text(result.value);
-                        },
-                   error:function(xhr, status, error) {
-                                  $('#AllResult').show();
-                                  $('#downloadlink').show();
-                                  $('#progress').hide();
-                                  alert(xhr.status);
-                                  alert(status);
-                                  $('#AllResult').text(error);
-                   }
-            });
+  /* To give the same size to all text field */
+  width: 250px;
 
+  -moz-box-sizing: border-box;
+       box-sizing: border-box;
 
-});
+  /* To harmonize the look & feel of text field border */
+  border: 1px solid #999;
+}
 
-</script>
+input:focus, textarea:focus {
+  /* To give a little highligh on active elements */
+  border-color: #000;
+}
 
+.button {
+  /* To position the buttons to the same position of the text fields */
+  padding-left: 90px; /* same size as the label elements */
+}
 
-
-
-
-       <!--  <div class="jumbotron"> -->
-       <input hidden type="text" name="ip" id="ip" value="{{ ip }}"><br/><br/>
+button {
+  /* This extra magin represent the same space as the space between
+     the labels and their text fields */
+  margin-left: .5em;
+}
+</style>
 
 
-       <center>
-       </center>
-
-<nav class="navbar navbar-default">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="#">Stdout
-      </a>
-       <p class="navbar-text navbar-right" id="downloadlink" hidden>Download <a href="http://200.12.221.13:5005/downloadstdout?result={{ resultid }}" class="navbar-link">Output</a></p>
-        <div class="bs-example clearfix">
-       <textarea rows="100" cols="100" id="AllResult" hidden>
-
-       </textarea>
-
-</div>
-
+<form action="/gettraceroute" method="GET">
+    <div>
+        <label for="sip">Source IP:</label>
+        <input type="text" id="sip" name="source_ip" />
     </div>
-  </div>
-</nav>
-<div id="progress" class="progress">
-  <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
-    <span class="sr-only">100% Complete</span>
-  </div>
-</div>
+    <div>
+        <label for="dip">Destination IP:</label>
+        <input type="text" id="dip" name="dest_ip" />
+    </div>
+
+    <div class="button">
+        <button type="submit">Traceroute</button>
+    </div>
+</form>
 
 {% endblock %}
 
