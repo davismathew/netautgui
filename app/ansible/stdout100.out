@@ -1,0 +1,26 @@
+
+PLAY [control] *****************************************************************
+
+TASK [setup] *******************************************************************
+[0;31mAn exception occurred during task execution. To see the full traceback, use -vvv. The error was: AttributeError: 'NoneType' object has no attribute 'upper'[0m
+[0;31mfatal: [control]: FAILED! => {"failed": true, "msg": "Unexpected failure during module execution.", "stdout": ""}[0m
+
+NO MORE HOSTS LEFT *************************************************************
+
+PLAY RECAP *********************************************************************
+[0;31mcontrol[0m                    : ok=0    changed=0    unreachable=0    [0;31mfailed[0m[0;31m=[0m[0;31m1[0m   
+
+Output ::- 2
+
+PLAY [control] *****************************************************************
+
+TASK [setup] *******************************************************************
+[0;31mAn exception occurred during task execution. To see the full traceback, use -vvv. The error was: AttributeError: 'NoneType' object has no attribute 'upper'[0m
+[0;31mfatal: [control]: FAILED! => {"failed": true, "msg": "Unexpected failure during module execution.", "stdout": ""}[0m
+
+NO MORE HOSTS LEFT *************************************************************
+
+PLAY RECAP *********************************************************************
+[0;31mcontrol[0m                    : ok=0    changed=0    unreachable=0    [0;31mfailed[0m[0;31m=[0m[0;31m1[0m   
+
+

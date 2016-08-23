@@ -12,8 +12,8 @@ import os
 import time
 from datetime import datetime
 from .ansible_utils import get_path
-# from play_util.AnsiblePlaybook import AnsiblePlaybook
-from play_util.TracePath import tracePath
+from play_util.AnsiblePlaybook import AnsiblePlaybook
+from tools_util.TracePath import tracePath
 
 @ansible.route('/downloadstdout', methods=['GET','POST'])
 def downloadstdout():
