@@ -33,8 +33,8 @@ def runresult():
         inventory = editresult.inventory
         editresult.outfile = stdoutfile
         # retdata = {'value':stdoutfile}
-        # playbook=AnsiblePlaybook(playbookName,inventory,stdoutfile)
-        # Output=playbook.runPlaybook()
+        playbook=AnsiblePlaybook(playbookName,inventory,stdoutfile)
+        Output=playbook.runPlaybook()
         fileRead=open(stdoutfile)
         Output=fileRead.read()
         # print Output
@@ -181,9 +181,7 @@ def listorion():
 @ansible.route('/gettraceip', methods=['GET','POST'])
 @login_required
 def gettraceip():
-    inputip="10.10.10.104"
-    baseurl="http://200.12.221.13:5005/create-result"
-    return render_template('ansible/traceip.html', ip=inputip)
+    return render_template('ansible/traceip.html')
 
 @ansible.route('/gettraceroute', methods=['GET','POST'])
 @login_required
@@ -215,11 +213,16 @@ def runtraceroute():
         # target.write("\n")
         # target.write('10.10.10.102')
 
-        # playbook=AnsiblePlaybook(playbookName,inventory,stdoutfile)
-        # Output=playbook.runPlaybook()
+        playbook=AnsiblePlaybook(playbookName,inventory,stdoutfile)
+        Output=playbook.runPlaybook()
+
+        factname = open('/etc/netbot/factshare.txt','r')
+        factpath = factname.read()
+        factfullname = "/etc/ansiblefacts/"+factpath
+
 
         tPath=tracePath('ops.emc-corp.net','svcorionnet@emc-corp.net','$V(0r!0N3t')
-        rPath=tPath.getPath("/etc/ansiblefacts/fact1471625818.json")
+        rPath=tPath.getPath(factfullname)
 
         # fileRead=open(stdoutfile)
         # Output=fileRead.read()
@@ -228,7 +231,7 @@ def runtraceroute():
         # Output=Output.replace("[0;31m","")
         # Output=Output.replace("[0m"," ")
         # Output=Output.replace("\x1b"," ")
-        retdata={'value':traceip}
+        retdata={'value':rPath}
         return jsonify(retdata)
 
     ret_data={'value':"use post with args result"}
