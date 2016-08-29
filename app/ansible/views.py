@@ -14,6 +14,7 @@ from datetime import datetime
 from .ansible_utils import get_path
 from play_util.AnsiblePlaybook import AnsiblePlaybook
 from tools_util.TracePath import tracePath
+import re
 
 @ansible.route('/downloadstdout', methods=['GET','POST'])
 def downloadstdout():
@@ -192,6 +193,12 @@ def gettraceroute():
     target.write('[routerxe]')
     target.write("\n")
     target.write(sourceip)
+
+    target = open('/home/davis/Documents/Network-automation/tracecommand.yaml', 'w')
+    target.write('---')
+    target.write("\n")
+    target.write('commands: traceroute '+destip)
+
     return render_template('ansible/traceroute.html', ip=destip)
 
 @ansible.route('/runtraceroute', methods=['GET','POST'])
@@ -202,10 +209,10 @@ def runtraceroute():
         playbookName = 'tracerouteip.yml'
         inventory = 'tracerouteinv'
         stdoutfile = '/etc/ansiblestdout/traceroute.out'
-        target = open('/home/davis/Documents/Network-automation/tracecommand.yaml', 'w')
-        target.write('---')
-        target.write("\n")
-        target.write('commands: traceroute '+traceip)
+#        target = open('/home/davis/Documents/Network-automation/tracecommand.yaml', 'w')
+#        target.write('---')
+#        target.write("\n")
+#        target.write('commands: traceroute '+traceip)
 
         # retdata = {'value':stdoutfile}
         # target = open('/home/davis/Documents/Network-automation/tracerouteinv', 'w')
@@ -215,24 +222,40 @@ def runtraceroute():
 
         playbook=AnsiblePlaybook(playbookName,inventory,stdoutfile)
         Output=playbook.runPlaybook()
+        fileRead=open(stdoutfile)
+        Output=fileRead.read()
+        # print Output
+	Output=Output.replace("[0;32m","")
+	Output=Output.replace("[0;31m","")
+	Output=Output.replace("[0m"," ")
+	Output=Output.replace("\x1b"," ")
+        match=re.match(r'.*\s+failed\=[1-9]+\s+.*',str(Output),re.DOTALL)
+	if match:
+		outvar="playbook not run. \n"+str(Output)
+	else:
+	        factname = open('/etc/netbot/factshare.txt','r')
+        	factpath = factname.read()
+        	factfullname = "/etc/ansiblefacts/"+factpath
 
-        factname = open('/etc/netbot/factshare.txt','r')
-        factpath = factname.read()
-        factfullname = "/etc/ansiblefacts/"+factpath
 
-
-        tPath=tracePath('ops.emc-corp.net','svcorionnet@emc-corp.net','$V(0r!0N3t')
-        rPath=tPath.getPath(factfullname)
-
+        	tPath=tracePath('ops.emc-corp.net','svcorionnet@emc-corp.net','$V(0r!0N3t')
+	        rPath=tPath.getPath(factfullname)
+		outvar=''
+	        if isinstance(rPath, list):
+		        for path in rPath:
+				outvar=outvar+path
+		        	outvar=outvar+"\n" 
+		else:
+			outvar=rPath
         # fileRead=open(stdoutfile)
         # Output=fileRead.read()
         # # print Output
-        # Output=Output.replace("[0;32m","")
-        # Output=Output.replace("[0;31m","")
-        # Output=Output.replace("[0m"," ")
-        # Output=Output.replace("\x1b"," ")
-        retdata={'value':rPath}
-        return jsonify(retdata)
+        #Output=Output.replace("[0;32m","")
+        #Output=Output.replace("[0;31m","")
+        #Output=Output.replace("[0m"," ")
+        #Output=Output.replace("\x1b"," ")
+	        retdata={'value':outvar}
+	        return jsonify(retdata)
 
     ret_data={'value':"use post with args result"}
     return jsonify(ret_data)
