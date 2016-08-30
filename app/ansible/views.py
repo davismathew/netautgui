@@ -201,7 +201,7 @@ def gettraceroute():
     target.write("\n")
     target.write(sourceip)
     commands=''
-    if vrf is 'true':
+    if vrf:
         commands='commands: traceroute vrf '+vrfname+' '+destip
     else:
         commands='commands: traceroute '+destip
