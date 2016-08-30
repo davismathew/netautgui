@@ -182,22 +182,34 @@ def listorion():
 @ansible.route('/gettraceip', methods=['GET','POST'])
 @login_required
 def gettraceip():
-    return render_template('ansible/traceip.html')
+    vrflist=['vrf','newname']
+    # vrffile = open('/etc/netbot/factshare.txt','r')
+    # vrflist = vrffile.read()
+    return render_template('ansible/traceip.html',vrfname = vrflist)
 
 @ansible.route('/gettraceroute', methods=['GET','POST'])
 @login_required
 def gettraceroute():
     sourceip=request.args.get('source_ip')
     destip=request.args.get('dest_ip')
+    vrf=''
+    if request.args.get('vrf') is not None:
+        vrf=request.args.get('vrf')
+    vrfname=request.args.get('vrfname')
     target = open('/home/davis/Documents/Network-automation/tracerouteinv', 'w')
     target.write('[routerxe]')
     target.write("\n")
     target.write(sourceip)
+    commands=''
+    if vrf is 'true':
+        commands='commands: traceroute vrf '+vrfname+' '+destip
+    else:
+        commands='commands: traceroute '+destip
 
     target = open('/home/davis/Documents/Network-automation/tracecommand.yaml', 'w')
     target.write('---')
     target.write("\n")
-    target.write('commands: traceroute '+destip)
+    target.write(commands)
 
     return render_template('ansible/traceroute.html', ip=destip)
 

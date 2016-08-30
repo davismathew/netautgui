@@ -70,6 +70,15 @@ button {
         <input type="text" id="dip" name="dest_ip" />
     </div>
 
+            <div><label for="vrf">Use vrf name:</label>
+    <input type="checkbox" id="vrf" name="vrf" value="true" checked="checked"/></div>
+            <div><label for="vrfdropdown">VRF Names:</label>
+
+                <select name="vrfname" id="vrfdropdown">
+            {% for vrf in vrfname %}
+                <option value={{ vrf }}>{{ vrf }}</option>
+            {% endfor %}
+                </select></div>
     <div class="button">
         <button type="submit">Traceroute</button>
     </div>
