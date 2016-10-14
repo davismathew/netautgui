@@ -182,7 +182,16 @@ def listorion():
 @ansible.route('/gettraceip', methods=['GET','POST'])
 @login_required
 def gettraceip():
-    vrflist=['vrf','newname']
+#    vrffile = open('/etc/netbot/vrflistname.txt','r')
+#    vrflist = vrffile.read()
+#    vrflistname = "/etc/ansiblefacts/"+vrflist
+    vrfnames=[]
+    with open('/etc/netbot/vrflistname.txt') as f:
+    	for line in f:
+        	vrfnames.append(line)
+
+#    vrflist=['vrf','newname']
+    vrflist=vrfnames
     # vrffile = open('/etc/netbot/factshare.txt','r')
     # vrflist = vrffile.read()
     return render_template('ansible/traceip.html',vrfname = vrflist)
@@ -241,13 +250,22 @@ def runtraceroute():
 	Output=Output.replace("[0;31m","")
 	Output=Output.replace("[0m"," ")
 	Output=Output.replace("\x1b"," ")
-        match=re.match(r'.*\s+failed\=[1-9]+\s+.*',str(Output),re.DOTALL)
-	if match:
-		outvar="playbook not run. \n"+str(Output)
+	flag=False
+        factname = open('/etc/netbot/factshare.txt','r')
+        factpath = factname.read()
+	if not factpath:
+		flag=True
+        factfullname = "/etc/ansiblefacts/"+factpath
+
+#        match=re.match(r'.*\s+failed\=[1-9]+\s+.*',str(Output),re.DOTALL)
+	if flag:
+		outvar="playbook not run. \n"
+		retdata={'value':outvar}
+		return jsonify(retdata)
 	else:
-	        factname = open('/etc/netbot/factshare.txt','r')
-        	factpath = factname.read()
-        	factfullname = "/etc/ansiblefacts/"+factpath
+#	        factname = open('/etc/netbot/factshare.txt','r')
+#        	factpath = factname.read()
+#        	factfullname = "/etc/ansiblefacts/"+factpath
 
 
         	tPath=tracePath('ops.emc-corp.net','svcorionnet@emc-corp.net','$V(0r!0N3t')
@@ -513,6 +531,13 @@ def dispresultoutput():
     resultid = request.args.get('id')
     # flash('Result has been created.')
     return render_template('dispoutput.html', resultid=resultid)
+
+@ansible.route('/test', methods=['GET','POST'])
+def test():
+    #resultid = request.args.get('id')
+    # flash('Result has been created.')
+    ret_data={'value':"use post with args result"}
+    return jsonify(ret_data)
 
 
 @ansible.route('/listresult', methods=['GET','POST'])
